@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To DO List</title>
+</head>
+<body>
+    <div class="container">
+        <div class="app">
+            <h1>LISTA DE TAREFAS</h1>
+            <form>
+                <input type="text" placeholder="Adicionar nova tarefa...">
+                <button type="submit" onclick="addTask(); return false">&plus;</button>
+            </form>
+            <ul>
+                <li>
+                    <input type="checkbox" onclick="taskComplet(this)">
+                    <input type="text" value="Minha tarefa" class="task" onfocus="getCurrentTask(this)" onblur="editTask(this)">
+                    <i class="fa fa trash" onclick="removeTask(this)"></i>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+    window.onload = loadTasks;
+    
+    function loadTasks(){
+        //Pegar as tarefas do localStorage e converter para um array
+        let tasks = Array.from(JSON.parse(localStorage.getItem("tasks")));
+        //Looping em torno das tarefas e adicionar elas na lista
+        tasks.forEach(tasks => {
+            const list = document.querySelector("ul");
+            const list = document.createElement("li");
+            li.innerHTML = `<input type="checkbox" onclick="taskComplete(this)" class="check" ${task.completed ? 'checked' : ''}>
+                    <input type="text" value="${task.task}" class="task ${task.completed ? 'completed' : ''}" onfocus="getCurrentTask(this)" onblur="editTask(this)">
+                    <i class="fa fa-trash" onclick="removeTask(this)"></i>`;
+            list.insertBefore(li, list.children[0]);
+
+        })
+    }
+    function addTask(){
+        const task = document.querySelector("form input");
+        const list = document.querySelector("ul");
+        // retorna se a tarefa for vazia
+        if (task.value === "") {
+            alert("Por favor, adicionar tarefa nova!");
+            return false;
+        }
+        // verificar se já existe alguma tarefa 
+        let tasks = Array.from(JSON.parse(localStorage.getItem("tasks")));
+        // Tarefa já existe
+        tasks.forEach(todo =>{
+            if (todo.task === task.value) {
+                alert("Tarefa já existe");
+                task.value = "";
+                return;
+            }
+        });
+        // adicionar tarefas para o localstorage
+        localStorage.setItem("tasks", JSON.stringify([...JSON.parse(localStorage.getItem("tasks") || "[]", {task: task.value, completed: false})]));
+
+        // criar lista de itens, adicionar um innerHTML e append to ul
+
+        const li = document.createElement("li");
+      li.innerHTML = `<input type="checkbox" onclick="taskComplete(this)" class="check">
+          <input type="text" value="${task.value}" class="task" onfocus="getCurrentTask(this)" onblur="editTask(this)">
+          <i class="fa fa-trash" onclick="removeTask(this)"></i>`;
+      list.insertBefore(li, list.children[0]);
+      // clear input
+      task.value = "";
+    }
+
+    function taskComplet(event) {
+        let tasks = Array.from(JSON.parse(localStorage.getItem("tasks")));
+        tasks.forEach(task => {
+        if (task.task === event.nextElementSibling.value) {
+          task.completed = !task.completed;
+        }
+      });
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      event.nextElementSibling.classList.toggle("completed");
+    }
+
+    function removeTask(event){
+        let tasks = Array.from(JSON.parse(localStorage.getItem("tasks")));
+      tasks.forEach(task => {
+        if (task.task === event.parentNode.children[1].value) {
+          // Remover Tarefa
+          tasks.splice(tasks.indexOf(task), 1);
+        }
+        });
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        event.parentElement.remove();
+    } 
+
+    // armazenar tarefas para seguir mudanças (declarar variável)
+    var currentTask = null;
+    // pegar Tarefa Atual
+
+    function getCurrentTask(event){
+        currentTask = event.value;
+    }
+    
+    function editTask(event){
+        let tasks = Array.from(JSON.parse(localStorage.getItem("tasks")));
+        // validar se existe tarefa 
+        if (event.value === "") {
+            alert("Tarefa está vazia!");
+        }
+         // Caso já exista tarefa
+      tasks.forEach(task => {
+        if (task.task === event.value) {
+          alert("Já existe tarefa!");
+          event.value = currentTask;
+          return;
+        }
+    });
+      // update task
+      tasks.forEach(task => {
+        if (task.task === currentTask) {
+          task.task = event.value;
+        }
+      });
+      // update local storage
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+    </script>
+</body>
+
